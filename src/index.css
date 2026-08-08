@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #14141A;
+  --paper: #F7F4EF;
+  --gold: #D4A537;
+  --magenta: #C4326B;
+  --teal: #1F8A83;
+}
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background-color: var(--ink);
+}
+
+.font-display {
+  font-family: 'Cairo', sans-serif;
+}
