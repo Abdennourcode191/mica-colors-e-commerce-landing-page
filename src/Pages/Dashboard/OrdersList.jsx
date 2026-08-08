@@ -25,6 +25,8 @@ export default function OrdersList() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [deletingId, setDeletingId] = useState(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null)
 
   useEffect(() => {
     loadOrders()
@@ -47,18 +49,28 @@ export default function OrdersList() {
     await supabase.from('orders').update({ status: newStatus }).eq('id', orderId)
   }
 
+  async function deleteOrder(orderId) {
+    setDeletingId(orderId)
+    const { error } = await supabase.from('orders').delete().eq('id', orderId)
+    setDeletingId(null)
+    setConfirmDeleteId(null)
+    if (!error) {
+      setOrders((prev) => prev.filter((o) => o.id !== orderId))
+    }
+  }
+
   const filteredOrders =
     filter === 'all' ? orders : orders.filter((o) => o.status === filter)
 
   if (loading) return <div>...جارٍ التحميل</div>
 
   return (
-    <div className="max-w-3xl space-y-4">
+    <div className="w-full max-w-3xl space-y-4">
       {/* FILTER TABS */}
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setFilter('all')}
-          className={`text-sm font-bold px-3 py-1.5 rounded-full border ${
+          className={`text-xs sm:text-sm font-bold px-3 py-1.5 rounded-full border ${
             filter === 'all' ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 border-gray-200'
           }`}
         >
@@ -68,7 +80,7 @@ export default function OrdersList() {
           <button
             key={s.value}
             onClick={() => setFilter(s.value)}
-            className={`text-sm font-bold px-3 py-1.5 rounded-full border ${
+            className={`text-xs sm:text-sm font-bold px-3 py-1.5 rounded-full border ${
               filter === s.value ? 'text-white border-transparent' : 'bg-white text-gray-500 border-gray-200'
             }`}
             style={filter === s.value ? { backgroundColor: s.color } : {}}
@@ -88,42 +100,71 @@ export default function OrdersList() {
           {filteredOrders.map((order) => {
             const style = statusStyle(order.status)
             const groupedColors = groupColors(order.selected_colors)
+            const isConfirmingDelete = confirmDeleteId === order.id
             return (
               <div key={order.id} className="bg-white rounded-xl p-4 shadow-sm">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <div className="font-bold">{order.customer_name}</div>
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
+                  <div className="min-w-0">
+                    <div className="font-bold truncate">{order.customer_name}</div>
                     <div className="text-sm text-gray-500">{order.phone}</div>
                   </div>
-                  <select
-                    value={order.status}
-                    onChange={(e) => updateStatus(order.id, e.target.value)}
-                    className="text-xs font-bold px-2 py-1.5 rounded-lg border"
-                    style={{ borderColor: style.color, color: style.color }}
-                  >
-                    {STATUS_OPTIONS.map((s) => (
-                      <option key={s.value} value={s.value}>
-                        {s.label}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <select
+                      value={order.status}
+                      onChange={(e) => updateStatus(order.id, e.target.value)}
+                      className="text-xs font-bold px-2 py-1.5 rounded-lg border"
+                      style={{ borderColor: style.color, color: style.color }}
+                    >
+                      {STATUS_OPTIONS.map((s) => (
+                        <option key={s.value} value={s.value}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </select>
+
+                    {isConfirmingDelete ? (
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => deleteOrder(order.id)}
+                          disabled={deletingId === order.id}
+                          className="text-xs font-bold px-2 py-1.5 rounded-lg text-white"
+                          style={{ backgroundColor: '#C4326B' }}
+                        >
+                          {deletingId === order.id ? '...' : 'تأكيد الحذف'}
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="text-xs font-bold px-2 py-1.5 rounded-lg border border-gray-200 text-gray-500"
+                        >
+                          إلغاء
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDeleteId(order.id)}
+                        className="text-xs font-bold px-2 py-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200"
+                      >
+                        حذف
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                <div className="text-sm text-gray-600 mb-3">
+                <div className="text-sm text-gray-600 mb-3 break-words">
                   {order.wilaya && <span>{order.wilaya} — </span>}
                   {order.address}
                 </div>
 
-                <div className="flex items-center justify-between border-t pt-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-t pt-3">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 shrink-0">
                       {order.quantity} ألوان:
                     </span>
                     <div className="flex gap-2 flex-wrap">
                       {groupedColors.map(({ hex, count }, i) => (
                         <div key={i} className="flex items-center gap-1">
                           <span
-                            className="w-4 h-4 rounded-full border"
+                            className="w-4 h-4 rounded-full border shrink-0"
                             style={{ backgroundColor: hex }}
                           />
                           {count > 1 && (
@@ -135,7 +176,7 @@ export default function OrdersList() {
                       ))}
                     </div>
                   </div>
-                  <div className="font-bold text-sm">{order.total_price} دج</div>
+                  <div className="font-bold text-sm shrink-0">{order.total_price} دج</div>
                 </div>
 
                 <div className="text-xs text-gray-400 mt-2">
