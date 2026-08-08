@@ -219,8 +219,106 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* HERO */}
-      <section className="relative w-full aspect-[4/3] sm:aspect-[16/7] overflow-hidden">
+      {/* ============ DESKTOP HERO + BUY BOX (lg and up) ============ */}
+      <section className="hidden lg:block px-8 xl:px-16 pt-10 pb-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 gap-12 items-start">
+          {/* LEFT: image carousel */}
+          <div>
+            <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden">
+              {product?.carousel_images?.length ? (
+                product.carousel_images.map((img, i) => (
+                  <img
+                    key={i}
+                    src={img}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+                    style={{ opacity: i === heroIndex ? 1 : 0 }}
+                  />
+                ))
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-[#1f1f27]">
+                  <span className="font-display text-3xl text-[var(--gold)]">
+                    ملونات ميكا
+                  </span>
+                </div>
+              )}
+              {product?.carousel_images?.length > 1 && (
+                <div className="absolute bottom-5 left-0 right-0 flex justify-center gap-2">
+                  {product.carousel_images.map((_, i) => (
+                    <span
+                      key={i}
+                      className="w-2 h-2 rounded-full"
+                      style={{
+                        backgroundColor:
+                          i === heroIndex ? "var(--gold)" : "rgba(247,244,239,0.4)",
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* thumbnail strip */}
+            {product?.carousel_images?.length > 1 && (
+              <div className="flex gap-3 mt-4">
+                {product.carousel_images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setHeroIndex(i)}
+                    className="w-16 h-16 rounded-xl overflow-hidden border-2"
+                    style={{
+                      borderColor: i === heroIndex ? "var(--gold)" : "transparent",
+                    }}
+                  >
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT: buy box */}
+          <div>
+            <h1 className="font-display text-4xl xl:text-5xl font-black text-[var(--paper)] mb-4">
+              {product?.name || "ملونات ميكا"}
+            </h1>
+            <p className="text-base text-[var(--paper)]/70 leading-relaxed mb-8 max-w-lg">
+              {product?.description ||
+                "الاستعمالات: تلوين الصابون، مستحضرات التجميل، الشموع، Résine، epoxy، الطلاء"}
+            </p>
+
+            <div
+              className="rounded-2xl p-7"
+              style={{ backgroundColor: "var(--paper)", color: "var(--ink)" }}
+            >
+              <h2 className="font-display text-xl font-extrabold mb-1">
+                استمارة الطلب
+              </h2>
+              <p className="text-sm text-black/60 mb-5">
+                اختر العرض ثم اختر ألوانك
+              </p>
+              <DesktopOrderForm
+                offers={offers}
+                selectedOffer={selectedOffer}
+                pickOffer={pickOffer}
+                availableColors={availableColors}
+                selectedColorCounts={selectedColorCounts}
+                totalColorsSelected={totalColorsSelected}
+                incrementColor={incrementColor}
+                decrementColor={decrementColor}
+                form={form}
+                setForm={setForm}
+                canSubmit={canSubmit}
+                submitting={submitting}
+                handleSubmit={handleSubmit}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ MOBILE HERO (below lg) ============ */}
+      <section className="lg:hidden relative w-full aspect-[4/3] sm:aspect-[16/7] overflow-hidden">
         {product?.carousel_images?.length ? (
           product.carousel_images.map((img, i) => (
             <img
@@ -255,238 +353,63 @@ export default function LandingPage() {
         )}
       </section>
 
-      {/* TITLE + CTA */}
-      <section className="px-5 pt-8 pb-4 text-center">
-        <h1 className="font-display text-3xl sm:text-4xl font-black text-[var(--paper)]">
-          {product?.name || "ملونات ميكا"}
-        </h1>
-        <p className="mt-3 text-sm sm:text-base text-[var(--paper)]/70 leading-relaxed max-w-md mx-auto">
-          {product?.description ||
-            "الاستعمالات: تلوين الصابون، مستحضرات التجميل، الشموع، Résine، epoxy، الطلاء"}
-        </p>
-        <button
-          onClick={scrollToForm}
-          className="mt-6 font-display font-bold text-lg px-8 py-3 rounded-full"
-          style={{ backgroundColor: "var(--gold)", color: "var(--ink)" }}
-        >
-          اطلب الآن
-        </button>
-      </section>
-
-      <DotRibbon />
-
-      {/* ORDER FORM */}
-      <section id="order-form" className="px-4 pb-10">
-        <div
-          className="max-w-xl mx-auto rounded-2xl p-5 sm:p-7"
-          style={{ backgroundColor: "var(--paper)", color: "var(--ink)" }}
-        >
-          <h2 className="font-display text-xl font-extrabold mb-1">
-            استمارة الطلب
-          </h2>
-          <p className="text-sm text-black/60 mb-5">
-            اختر العرض ثم اختر ألوانك
+      <div className="lg:hidden">
+        {/* TITLE + CTA */}
+        <section className="px-5 pt-8 pb-4 text-center">
+          <h1 className="font-display text-3xl sm:text-4xl font-black text-[var(--paper)]">
+            {product?.name || "ملونات ميكا"}
+          </h1>
+          <p className="mt-3 text-sm sm:text-base text-[var(--paper)]/70 leading-relaxed max-w-md mx-auto">
+            {product?.description ||
+              "الاستعمالات: تلوين الصابون، مستحضرات التجميل، الشموع، Résine، epoxy، الطلاء"}
           </p>
+          <button
+            onClick={scrollToForm}
+            className="mt-6 font-display font-bold text-lg px-8 py-3 rounded-full"
+            style={{ backgroundColor: "var(--gold)", color: "var(--ink)" }}
+          >
+            اطلب الآن
+          </button>
+        </section>
 
-          {/* OFFERS */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            {offers.map((offer) => {
-              const active = selectedOffer?.id === offer.id;
-              return (
-                <button
-                  key={offer.id}
-                  onClick={() => pickOffer(offer)}
-                  className="rounded-xl p-4 text-right border-2 transition"
-                  style={{
-                    borderColor: active ? "var(--magenta)" : "rgba(0,0,0,0.1)",
-                    backgroundColor: active ? "rgba(196,50,107,0.06)" : "white",
-                  }}
-                >
-                  <div className="font-display font-bold text-base">
-                    {offer.quantity} ألوان
-                  </div>
-                  <div className="mt-1 flex items-center gap-2">
-                    {offer.original_price && (
-                      <span className="text-xs line-through text-black/40">
-                        {offer.original_price} دج
-                      </span>
-                    )}
-                    <span
-                      className="font-bold"
-                      style={{ color: "var(--magenta)" }}
-                    >
-                      {offer.price} دج
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
+        <DotRibbon />
+
+        {/* MOBILE ORDER FORM */}
+        <section id="order-form" className="px-4 pb-10">
+          <div
+            className="max-w-xl mx-auto rounded-2xl p-5 sm:p-7"
+            style={{ backgroundColor: "var(--paper)", color: "var(--ink)" }}
+          >
+            <h2 className="font-display text-xl font-extrabold mb-1">
+              استمارة الطلب
+            </h2>
+            <p className="text-sm text-black/60 mb-5">
+              اختر العرض ثم اختر ألوانك
+            </p>
+            <DesktopOrderForm
+              offers={offers}
+              selectedOffer={selectedOffer}
+              pickOffer={pickOffer}
+              availableColors={availableColors}
+              selectedColorCounts={selectedColorCounts}
+              totalColorsSelected={totalColorsSelected}
+              incrementColor={incrementColor}
+              decrementColor={decrementColor}
+              form={form}
+              setForm={setForm}
+              canSubmit={canSubmit}
+              submitting={submitting}
+              handleSubmit={handleSubmit}
+            />
           </div>
-          <p className="text-xs text-black/50 text-center mb-6">
-            للطلب بكميات اكبر يرجى التواصل معنا على الرقم{" "}
-            <a href="tel:0783916924" className="font-bold" style={{ color: "var(--magenta)" }}>
-              07.83.91.69.24
-            </a>
-          </p>
-
-          {/* COLOR PICKER */}
-          {selectedOffer && (
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-bold text-sm">اختر الألوان</h3>
-                <span
-                  className="text-xs font-bold px-2 py-1 rounded-full"
-                  style={{
-                    backgroundColor:
-                      totalColorsSelected > 0
-                        ? "var(--teal)"
-                        : "rgba(0,0,0,0.08)",
-                    color: totalColorsSelected > 0 ? "white" : "black",
-                  }}
-                >
-                  {totalColorsSelected}/{selectedOffer.quantity}
-                </span>
-              </div>
-
-              {availableColors.length === 0 ? (
-                <p className="text-xs text-black/50">
-                  لم يتم إضافة الألوان بعد
-                </p>
-              ) : (
-                <div className="flex flex-wrap gap-4">
-                  {availableColors.map((c) => {
-                    const count = selectedColorCounts[c.hex] || 0;
-                    const capReached =
-                      totalColorsSelected >= selectedOffer.quantity;
-                    return (
-                      <div
-                        key={c.hex}
-                        className="flex flex-col items-center gap-1 w-14"
-                      >
-                        <button
-                          type="button"
-                          disabled={capReached && count === 0}
-                          onClick={() => incrementColor(c.hex)}
-                          className="relative"
-                          style={{
-                            opacity: capReached && count === 0 ? 0.35 : 1,
-                          }}
-                        >
-                          <span
-                            className="w-9 h-9 rounded-full border-2 block"
-                            style={{
-                              backgroundColor: c.hex,
-                              borderColor:
-                                count > 0 ? "var(--magenta)" : "transparent",
-                              boxShadow:
-                                count > 0
-                                  ? "0 0 0 2px var(--paper), 0 0 0 3px var(--magenta)"
-                                  : "none",
-                            }}
-                          />
-                          {count > 0 && (
-                            <span
-                              className="absolute -top-1.5 -right-1.5 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none"
-                              style={{
-                                backgroundColor: "var(--magenta)",
-                                color: "white",
-                              }}
-                            >
-                              {count}
-                            </span>
-                          )}
-                        </button>
-                        <span className="text-[10px] text-black/60">
-                          {c.name}
-                        </span>
-                        {count > 0 && (
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <button
-                              type="button"
-                              onClick={() => decrementColor(c.hex)}
-                              className="w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center"
-                              style={{ backgroundColor: "rgba(0,0,0,0.08)" }}
-                            >
-                              −
-                            </button>
-                            <button
-                              type="button"
-                              disabled={capReached}
-                              onClick={() => incrementColor(c.hex)}
-                              className="w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center disabled:opacity-30"
-                              style={{ backgroundColor: "rgba(0,0,0,0.08)" }}
-                            >
-                              +
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* CUSTOMER INFO */}
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <input
-              type="text"
-              placeholder="الاسم الكامل"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm focus:outline-none focus:border-[var(--magenta)]"
-            />
-            <input
-              type="tel"
-              placeholder="رقم الهاتف"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm focus:outline-none focus:border-[var(--magenta)]"
-            />
-            <input
-              type="text"
-              placeholder="الولاية"
-              value={form.wilaya}
-              onChange={(e) => setForm({ ...form, wilaya: e.target.value })}
-              className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm focus:outline-none focus:border-[var(--magenta)]"
-            />
-            <textarea
-              placeholder="العنوان بالتفصيل"
-              value={form.address}
-              onChange={(e) => setForm({ ...form, address: e.target.value })}
-              rows={2}
-              className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm focus:outline-none focus:border-[var(--magenta)]"
-            />
-
-            {selectedOffer && (
-              <div className="flex items-center justify-between pt-2 text-sm font-bold">
-                <span>المجموع</span>
-                <span style={{ color: "var(--magenta)" }}>
-                  {selectedOffer.price} دج
-                </span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={!canSubmit || submitting}
-              className="w-full font-display font-bold text-lg py-3 rounded-full mt-2 disabled:opacity-40"
-              style={{ backgroundColor: "var(--magenta)", color: "white" }}
-            >
-              {submitting
-                ? "...جارٍ الإرسال"
-                : "تأكيد الطلب — الدفع عند الاستلام"}
-            </button>
-          </form>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <DotRibbon />
 
       {/* TRUST BADGES */}
-      <section className="px-4 pb-10">
-        <div className="max-w-xl mx-auto grid grid-cols-3 gap-3 text-center">
+      <section className="px-4 lg:px-8 pb-10 lg:pb-14">
+        <div className="max-w-xl lg:max-w-4xl mx-auto grid grid-cols-3 gap-3 lg:gap-6 text-center">
           {[
             { label: "توصيل سريع", icon: "🚚" },
             { label: "الدفع عند الاستلام", icon: "💵" },
@@ -494,41 +417,41 @@ export default function LandingPage() {
           ].map((b) => (
             <div
               key={b.label}
-              className="rounded-xl p-4"
+              className="rounded-xl lg:rounded-2xl p-4 lg:p-6"
               style={{ backgroundColor: "rgba(247,244,239,0.06)" }}
             >
-              <div className="text-2xl mb-1">{b.icon}</div>
-              <div className="text-xs text-[var(--paper)]/80">{b.label}</div>
+              <div className="text-2xl lg:text-3xl mb-1 lg:mb-2">{b.icon}</div>
+              <div className="text-xs lg:text-sm text-[var(--paper)]/80">{b.label}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* PRODUCT SHOWCASE */}
-      <section className="px-4 pb-14">
-        <div className="max-w-xl mx-auto text-center mb-6">
-          <h2 className="font-display text-2xl font-extrabold">
+      <section className="px-4 lg:px-8 pb-14 lg:pb-20">
+        <div className="max-w-xl lg:max-w-3xl mx-auto text-center mb-6 lg:mb-10">
+          <h2 className="font-display text-2xl lg:text-4xl font-extrabold">
             أكثر من 20 لون
           </h2>
-          <p className="text-sm text-[var(--paper)]/70 mt-2">
+          <p className="text-sm lg:text-base text-[var(--paper)]/70 mt-2 lg:mt-3">
             مثالية لتلوين الصابون، الشموع، الراتنج، والإبوكسي بجودة احترافية
           </p>
         </div>
-        <div className="max-w-xl mx-auto grid grid-cols-2 gap-3">
-          {product?.carousel_images?.slice(0, 4).map((img, i) => (
+        <div className="max-w-xl lg:max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-5">
+          {product?.carousel_images?.map((img, i) => (
             <img
               key={i}
               src={img}
               alt=""
-              className="w-full aspect-square object-cover rounded-xl"
+              className="w-full aspect-square object-cover rounded-xl lg:rounded-2xl"
             />
           ))}
         </div>
       </section>
 
-      {/* STICKY CTA (mobile) */}
+      {/* STICKY CTA (mobile only) */}
       <div
-        className="sticky bottom-0 left-0 right-0 p-3 backdrop-blur border-t border-white/10"
+        className="lg:hidden sticky bottom-0 left-0 right-0 p-3 backdrop-blur border-t border-white/10"
         style={{ backgroundColor: "rgba(20,20,26,0.92)" }}
       >
         <button
@@ -539,6 +462,196 @@ export default function LandingPage() {
           اطلب الآن
         </button>
       </div>
+    </div>
+  );
+}
+
+function DesktopOrderForm({
+  offers,
+  selectedOffer,
+  pickOffer,
+  availableColors,
+  selectedColorCounts,
+  totalColorsSelected,
+  incrementColor,
+  decrementColor,
+  form,
+  setForm,
+  canSubmit,
+  submitting,
+  handleSubmit,
+}) {
+  return (
+    <div>
+      {/* OFFERS */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        {offers.map((offer) => {
+          const active = selectedOffer?.id === offer.id;
+          return (
+            <button
+              key={offer.id}
+              onClick={() => pickOffer(offer)}
+              className="rounded-xl p-4 text-right border-2 transition"
+              style={{
+                borderColor: active ? "var(--magenta)" : "rgba(0,0,0,0.1)",
+                backgroundColor: active ? "rgba(196,50,107,0.06)" : "white",
+              }}
+            >
+              <div className="font-display font-bold text-base">
+                {offer.quantity} ألوان
+              </div>
+              <div className="mt-1 flex items-center gap-2">
+                {offer.original_price && (
+                  <span className="text-xs line-through text-black/40">
+                    {offer.original_price} دج
+                  </span>
+                )}
+                <span className="font-bold" style={{ color: "var(--magenta)" }}>
+                  {offer.price} دج
+                </span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <p className="text-xs text-black/50 text-center mb-6">
+        للطلب بكميات اكبر يرجى التواصل معنا على الرقم{" "}
+        <a href="tel:0783916924" className="font-bold" style={{ color: "var(--magenta)" }}>
+          07.83.91.69.24
+        </a>
+      </p>
+
+      {/* COLOR PICKER */}
+      {selectedOffer && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-sm">اختر الألوان</h3>
+            <span
+              className="text-xs font-bold px-2 py-1 rounded-full"
+              style={{
+                backgroundColor:
+                  totalColorsSelected > 0 ? "var(--teal)" : "rgba(0,0,0,0.08)",
+                color: totalColorsSelected > 0 ? "white" : "black",
+              }}
+            >
+              {totalColorsSelected}/{selectedOffer.quantity}
+            </span>
+          </div>
+
+          {availableColors.length === 0 ? (
+            <p className="text-xs text-black/50">لم يتم إضافة الألوان بعد</p>
+          ) : (
+            <div className="flex flex-wrap gap-4">
+              {availableColors.map((c) => {
+                const count = selectedColorCounts[c.hex] || 0;
+                const capReached = totalColorsSelected >= selectedOffer.quantity;
+                return (
+                  <div key={c.hex} className="flex flex-col items-center gap-1 w-14">
+                    <button
+                      type="button"
+                      disabled={capReached && count === 0}
+                      onClick={() => incrementColor(c.hex)}
+                      className="relative"
+                      style={{ opacity: capReached && count === 0 ? 0.35 : 1 }}
+                    >
+                      <span
+                        className="w-9 h-9 rounded-full border-2 block"
+                        style={{
+                          backgroundColor: c.hex,
+                          borderColor: count > 0 ? "var(--magenta)" : "transparent",
+                          boxShadow:
+                            count > 0
+                              ? "0 0 0 2px var(--paper), 0 0 0 3px var(--magenta)"
+                              : "none",
+                        }}
+                      />
+                      {count > 0 && (
+                        <span
+                          className="absolute -top-1.5 -right-1.5 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none"
+                          style={{ backgroundColor: "var(--magenta)", color: "white" }}
+                        >
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                    <span className="text-[10px] text-black/60">{c.name}</span>
+                    {count > 0 && (
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <button
+                          type="button"
+                          onClick={() => decrementColor(c.hex)}
+                          className="w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center"
+                          style={{ backgroundColor: "rgba(0,0,0,0.08)" }}
+                        >
+                          −
+                        </button>
+                        <button
+                          type="button"
+                          disabled={capReached}
+                          onClick={() => incrementColor(c.hex)}
+                          className="w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center disabled:opacity-30"
+                          style={{ backgroundColor: "rgba(0,0,0,0.08)" }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* CUSTOMER INFO */}
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input
+          type="text"
+          placeholder="الاسم الكامل"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm focus:outline-none focus:border-[var(--magenta)]"
+        />
+        <input
+          type="tel"
+          placeholder="رقم الهاتف"
+          value={form.phone}
+          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm focus:outline-none focus:border-[var(--magenta)]"
+        />
+        <input
+          type="text"
+          placeholder="الولاية"
+          value={form.wilaya}
+          onChange={(e) => setForm({ ...form, wilaya: e.target.value })}
+          className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm focus:outline-none focus:border-[var(--magenta)]"
+        />
+        <textarea
+          placeholder="العنوان بالتفصيل"
+          value={form.address}
+          onChange={(e) => setForm({ ...form, address: e.target.value })}
+          rows={2}
+          className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm focus:outline-none focus:border-[var(--magenta)]"
+        />
+
+        {selectedOffer && (
+          <div className="flex items-center justify-between pt-2 text-sm font-bold">
+            <span>المجموع</span>
+            <span style={{ color: "var(--magenta)" }}>{selectedOffer.price} دج</span>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={!canSubmit || submitting}
+          className="w-full font-display font-bold text-lg py-3 rounded-full mt-2 disabled:opacity-40"
+          style={{ backgroundColor: "var(--magenta)", color: "white" }}
+        >
+          {submitting ? "...جارٍ الإرسال" : "تأكيد الطلب — الدفع عند الاستلام"}
+        </button>
+      </form>
     </div>
   );
 }
