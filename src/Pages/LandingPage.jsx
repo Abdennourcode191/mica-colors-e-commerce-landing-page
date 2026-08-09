@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
+const DZD_TO_USD_RATE = 260; // update this periodically to match the real exchange rate
+
 export default function LandingPage() {
   const [product, setProduct] = useState(null);
   const [offers, setOffers] = useState([]);
@@ -143,13 +145,11 @@ export default function LandingPage() {
     setSubmitting(false);
     if (!error) {
       if (window.fbq) {
- window.fbq("track", "Purchase", {
-  value: (selectedOffer.price / exchangeRateToUSD).toFixed(2),
-  currency: "USD",
-});
-
-  });
-}
+        window.fbq("track", "Purchase", {
+          value: (selectedOffer.price / DZD_TO_USD_RATE).toFixed(2),
+          currency: "USD",
+        });
+      }
       setSubmitted(true);
       setForm({ name: "", phone: "", address: "", wilaya: "" });
       setSelectedOffer(null);
