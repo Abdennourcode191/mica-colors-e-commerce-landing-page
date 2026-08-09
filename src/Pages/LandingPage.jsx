@@ -142,21 +142,19 @@ export default function LandingPage() {
       total_price: selectedOffer.price,
       status: "pending",
     });
-    setSubmitting(false);
-    if (!error) {
-      if (window.fbq) {
-        window.fbq("track", "Purchase", {
-          value: (selectedOffer.price / DZD_TO_USD_RATE).toFixed(2),
-          currency: "USD",
-        });
-      }
-      setSubmitted(true);
-      setForm({ name: "", phone: "", address: "", wilaya: "" });
-      setSelectedOffer(null);
-      setSelectedColorCounts({});
-    }
+   setSubmitting(false);
+if (!error) {
+  if (window.fbq) {
+    window.fbq("track", "Purchase", {
+      value: Number((selectedOffer.price / DZD_TO_USD_RATE).toFixed(2)),
+      currency: "USD",
+    });
   }
-
+  setSubmitted(true);
+  setForm({ name: "", phone: "", address: "", wilaya: "" });
+  setSelectedOffer(null);
+  setSelectedColorCounts({});
+}
   function scrollToForm() {
     document
       .getElementById("order-form")
