@@ -145,7 +145,7 @@ export default function LandingPage() {
       if (window.fbq) {
   window.fbq("track", "Purchase", {
     value: selectedOffer.price,
-    currency: "DZD",
+
   });
 }
       setSubmitted(true);
