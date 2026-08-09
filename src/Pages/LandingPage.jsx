@@ -143,11 +143,11 @@ export default function LandingPage() {
     setSubmitting(false);
     if (!error) {
       if (window.fbq) {
-        window.fbq("track", "Lead", {
-          value: selectedOffer.price,
-          currency: "DZD",
-        });
-      }
+  window.fbq("track", "Purchase", {
+    value: selectedOffer.price,
+    currency: "DZD",
+  });
+}
       setSubmitted(true);
       setForm({ name: "", phone: "", address: "", wilaya: "" });
       setSelectedOffer(null);
