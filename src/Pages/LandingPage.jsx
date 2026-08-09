@@ -143,8 +143,10 @@ export default function LandingPage() {
     setSubmitting(false);
     if (!error) {
       if (window.fbq) {
-  window.fbq("track", "Purchase", {
-    value: selectedOffer.price,
+ window.fbq("track", "Purchase", {
+  value: (selectedOffer.price / exchangeRateToUSD).toFixed(2),
+  currency: "USD",
+});
 
   });
 }
